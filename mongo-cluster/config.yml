@@ -1,0 +1,36 @@
+version: '3.8'
+networks:
+  hnet:               ### 自建的network
+    external: true
+
+services:
+  configsvr0:
+    container_name: configsvr0
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017
+    networks:
+      hnet:
+        ipv4_address: 172.20.1.5
+    ports:
+      - 40001:27017
+
+  configsvr1:
+    container_name: configsvr1
+    image: mongo
+    command: mongod --configsvr --replSet cfgrs --port 27017
+    networks:
+      hnet:
+        ipv4_address: 172.20.1.6
+    ports:
+      - 40002:27017
+
+# rs.initiate(
+#   {
+#     _id: "cfgrs",
+#     configsvr: true,
+#     members: [
+#       { _id : 0, host : "172.20.1.5:27017" },
+#       { _id : 1, host : "172.20.1.6:27017" }
+#     ]
+#   }
+# )

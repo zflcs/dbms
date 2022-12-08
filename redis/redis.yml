@@ -1,0 +1,16 @@
+version: "3.8"
+networks:
+  hnet:               ### 自建的network
+    external: true
+services:
+  redis:
+    image: redis
+    container_name: cache
+    command: redis-server
+    networks:
+        hnet:
+          ipv4_address: 172.20.1.12
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_REPLICATION_MODE=master
