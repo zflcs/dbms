@@ -1,5 +1,6 @@
 package dbms.Controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +24,7 @@ public class HdfsController {
     static {
         HdfsController.UGI = UserGroupInformation.createRemoteUser("hadoop");
         HdfsController.CONF = new Configuration();
-        HdfsController.CONF.set("fs.defaultFS", "hdfs://172.20.1.0:9000");
+        HdfsController.CONF.set("fs.defaultFS", "hdfs://127.0.0.1:9000");
         try {
             HdfsController.FS = FileSystem.get(HdfsController.CONF);
         } catch (IOException e) {
@@ -31,6 +32,8 @@ public class HdfsController {
             e.printStackTrace();
         }
     }
+
+    @CrossOrigin
 
     @RequestMapping(value = "/txt_content")
     void text(@RequestParam(value="article_id") int article_id, @RequestParam(value="txt_name") String txt_name, HttpServletResponse response) {
@@ -51,6 +54,7 @@ public class HdfsController {
         // return "ok";
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/img_content")
     void img(@RequestParam(value="article_id") int article_id, @RequestParam(value="img_name") String img_name, HttpServletResponse response) {
         Path img_path = new Path("/user/hadoop/articles/article" + article_id + "/" + img_name);
@@ -70,6 +74,7 @@ public class HdfsController {
         // return "ok";
     }
 
+    @CrossOrigin
     @RequestMapping(value = "/video_content")
     void video(@RequestParam(value="article_id") int article_id, @RequestParam(value="video_name") String video_name, HttpServletResponse response) {
         Path video_path = new Path("/user/hadoop/articles/article" + article_id + "/" + video_name);
