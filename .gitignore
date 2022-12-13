@@ -1,4 +1,5 @@
 dbms/target/classes/*.dat
 dbms/src/main/resources/*.dat
-dbms/target
+dbms/target/
 .idea/
+dbms/.vscode/

@@ -1,22 +1,14 @@
 package dbms.Controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,12 +23,10 @@ public class HdfsController {
     public static Configuration CONF;
     public static FileSystem FS;
 
-    final private Gson gson = new Gson();
-
     static {
         HdfsController.UGI = UserGroupInformation.createRemoteUser("hadoop");
         HdfsController.CONF = new Configuration();
-        HdfsController.CONF.set("fs.defaultFS", "hdfs://127.0.0.1:9000");
+        HdfsController.CONF.set("fs.defaultFS", "hdfs://172.20.1.0:9000");
         try {
             HdfsController.FS = FileSystem.get(HdfsController.CONF);
         } catch (IOException e) {
@@ -45,11 +35,11 @@ public class HdfsController {
         }
     }
 
-    @CrossOrigin
     @RequestMapping(value = "/all_file_name")
     String get_all_file_names(@RequestParam(value="aid") int article_id, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
         Path path = new Path("/user/hadoop/articles/article" + article_id);
-
+        Gson gson = new Gson();
         ArrayList<String> paths = new ArrayList<>();
         try {
             FileStatus[] stats = FS.listStatus(path);
@@ -62,14 +52,13 @@ public class HdfsController {
         return gson.toJson(paths);
     }
 
-    @CrossOrigin
+
     @RequestMapping(value = "/file_content")
-    void get_file(@RequestParam(value="aid") int article_id, @RequestParam(value="filename") String filename, HttpServletResponse response) {
-        Path filepath = new Path("/user/hadoop/articles/article" + article_id + "/" + filename);
+    void file_content(@RequestParam(value="aid") int aid, @RequestParam(value="filename") String filename, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+        Path text = new Path("/user/hadoop/articles/article" + aid + "/" + filename);
         try {
-            FSDataInputStream ins = FS.open(filepath);
-            // ByteBuffer bf = new ByteBuffer();
-            // ins.read(bf);
+            FSDataInputStream ins = FS.open(text);
             int ch = ins.read();
             while (ch != -1) {
                 response.getOutputStream().write(ch);
@@ -79,6 +68,8 @@ public class HdfsController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        // return "ok";
     }
+
+
+
 }

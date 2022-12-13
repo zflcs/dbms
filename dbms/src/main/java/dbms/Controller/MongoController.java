@@ -11,19 +11,24 @@ import java.time.*;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+
 
 import org.bson.Document;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
+
+
+
 @RestController
 public class MongoController {
-    @CrossOrigin
+    
     @RequestMapping("/query_user")
-    JSONObject query_user(String uid) {
+    JSONObject query_user(String uid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
         ArrayList<Document> docs = ReadService.query_read(new BasicDBObject("uid", uid));
         JSONObject res = new JSONObject();
         ArrayList<String> aids = new ArrayList<>();
@@ -39,29 +44,27 @@ public class MongoController {
         return res;
     }
 
-    @CrossOrigin
     @RequestMapping("/query_article")
-    JSONObject query_article(@RequestParam(value="aid") String aid) {
-        System.out.println(aid);
+    JSONObject query_article(@RequestParam(value="aid") String aid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
         ArrayList<Document> docs = ArticleService.query_article(new BasicDBObject("aid", aid));
         JSONObject res = new JSONObject();
         res.put("res", docs.get(0).toString());
         return res;
     }
 
-    @CrossOrigin
     @RequestMapping("/query_article_status")
-    JSONObject query_article_status(@RequestParam(value="aid") String aid) {
-        System.out.println(aid);
+    JSONObject query_article_status(@RequestParam(value="aid") String aid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
         ArrayList<Document> docs = BeReadService.query_be_read(new BasicDBObject("aid", Integer.parseInt(aid)));
         JSONObject res = new JSONObject();
         res.put("res", docs.get(0).toString());
         return res;
     }
 
-    @CrossOrigin
     @RequestMapping("/popular_rank")
-    JSONObject query_popular_rank(@RequestParam(value="time") Long time, @RequestParam(value="type") String type, @RequestParam(value="limit") int limit) {
+    JSONObject query_popular_rank(@RequestParam(value="time") Long time, @RequestParam(value="type") String type, @RequestParam(value="limit") int limit, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
         Timestamp tmp = new Timestamp(time);
         BasicDBObject condition = new BasicDBObject();
         LocalDateTime date = tmp.toLocalDateTime();
