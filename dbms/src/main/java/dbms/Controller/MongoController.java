@@ -11,16 +11,17 @@ import java.time.*;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.Document;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-
-
+import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
 public class MongoController {
-    
+    @CrossOrigin
     @RequestMapping("/query_user")
     JSONObject query_user(String uid) {
         ArrayList<Document> docs = ReadService.query_read(new BasicDBObject("uid", uid));
@@ -38,6 +39,7 @@ public class MongoController {
         return res;
     }
 
+    @CrossOrigin
     @RequestMapping("/query_article")
     JSONObject query_article(@RequestParam(value="aid") String aid) {
         System.out.println(aid);
@@ -47,6 +49,7 @@ public class MongoController {
         return res;
     }
 
+    @CrossOrigin
     @RequestMapping("/query_article_status")
     JSONObject query_article_status(@RequestParam(value="aid") String aid) {
         System.out.println(aid);
@@ -56,6 +59,7 @@ public class MongoController {
         return res;
     }
 
+    @CrossOrigin
     @RequestMapping("/popular_rank")
     JSONObject query_popular_rank(@RequestParam(value="time") Long time, @RequestParam(value="type") String type, @RequestParam(value="limit") int limit) {
         Timestamp tmp = new Timestamp(time);
