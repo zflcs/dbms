@@ -1,2 +1,4 @@
 dbms/target/classes/*.dat
 dbms/src/main/resources/*.dat
+dbms/target
+.idea/
