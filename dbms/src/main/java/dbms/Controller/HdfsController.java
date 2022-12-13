@@ -15,6 +15,8 @@ import com.google.gson.JsonObject;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -45,8 +47,9 @@ public class HdfsController {
 
     @CrossOrigin
     @RequestMapping(value = "/all_file_name")
-    String get_all_file_names(@RequestParam(value="article_id") int article_id, HttpServletResponse response) {
+    String get_all_file_names(@RequestParam(value="aid") int article_id, HttpServletResponse response) {
         Path path = new Path("/user/hadoop/articles/article" + article_id);
+
         ArrayList<String> paths = new ArrayList<>();
         try {
             FileStatus[] stats = FS.listStatus(path);
@@ -61,10 +64,10 @@ public class HdfsController {
 
     @CrossOrigin
     @RequestMapping(value = "/file_content")
-    void get_file(@RequestParam(value="filepath") String filepath, HttpServletResponse response) {
-        Path text = new Path(filepath);
+    void get_file(@RequestParam(value="aid") int article_id, @RequestParam(value="filename") String filename, HttpServletResponse response) {
+        Path filepath = new Path("/user/hadoop/articles/article" + article_id + "/" + filename);
         try {
-            FSDataInputStream ins = FS.open(text);
+            FSDataInputStream ins = FS.open(filepath);
             // ByteBuffer bf = new ByteBuffer();
             // ins.read(bf);
             int ch = ins.read();
