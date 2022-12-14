@@ -1,5 +1,7 @@
 package dbms.Controller;
 
+import com.alibaba.fastjson.JSON;
+import org.apache.hadoop.yarn.webapp.hamlet2.Hamlet;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +18,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.security.UserGroupInformation;
 
+import dbms.Controller.RedisController;
+
 @RestController
 public class HdfsController {
 
@@ -26,7 +30,7 @@ public class HdfsController {
     static {
         HdfsController.UGI = UserGroupInformation.createRemoteUser("hadoop");
         HdfsController.CONF = new Configuration();
-        HdfsController.CONF.set("fs.defaultFS", "hdfs://172.20.1.0:9000");
+        HdfsController.CONF.set("fs.defaultFS", "hdfs://127.0.0.1:9000");
         try {
             HdfsController.FS = FileSystem.get(HdfsController.CONF);
         } catch (IOException e) {
@@ -37,9 +41,15 @@ public class HdfsController {
 
     @RequestMapping(value = "/all_file_name")
     String get_all_file_names(@RequestParam(value="aid") int article_id, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+        String key = "all_file_name:aid=" + article_id;
+        System.out.println("key=" + key);
+        if(RedisController.jedis.exists(key)) {
+            System.out.println("Cache hit:" + key);
+            return RedisController.jedis.get(key);
+        }
+        System.out.println("Cache miss:" + key);
         Path path = new Path("/user/hadoop/articles/article" + article_id);
-        Gson gson = new Gson();
         ArrayList<String> paths = new ArrayList<>();
         try {
             FileStatus[] stats = FS.listStatus(path);
@@ -49,7 +59,11 @@ public class HdfsController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return gson.toJson(paths);
+
+        String ret = JSON.toJSONString(paths);
+        RedisController.jedis.set(key, ret);
+
+        return ret;
     }
 
 
