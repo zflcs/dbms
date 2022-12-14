@@ -3,10 +3,8 @@ package dbms.Controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
-import dbms.Service.ArticleService;
-import dbms.Service.BeReadService;
-import dbms.Service.PopularRankService;
-import dbms.Service.ReadService;
+import dbms.Service.*;
+
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.temporal.WeekFields;
@@ -26,7 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MongoController {
-    
+    static {
+        RedisController.jedis.flushDB();
+    }
+
     @RequestMapping("/query_user")
     String query_user(String uid, HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
@@ -38,20 +39,8 @@ public class MongoController {
         }
         System.out.println("Cache miss:" + key);
 
-        ArrayList<Document> docs = ReadService.query_read(new BasicDBObject("uid", uid));
-        JSONObject res = new JSONObject();
-        ArrayList<String> aids = new ArrayList<>();
-        for(Document doc: docs) {
-            aids.add(doc.getString("aid"));
-        }
-        ArrayList<Document> article_docs = ArticleService.query_article(new BasicDBObject("aid", new BasicDBObject("$in", aids)));
-        int count = 0;
-        for(Document doc: article_docs) {
-            res.put("res" + count, doc.toJson());
-            count++;
-        }
-
-        String ret = res.toString();
+        ArrayList<Document> docs = UserService.query_user(new BasicDBObject("uid", uid));
+        String ret = JSON.toJSONString(docs);
         RedisController.jedis.set(key, ret);
 
         return ret;
@@ -62,16 +51,14 @@ public class MongoController {
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
         String key = "query_article:aid=" + aid;
+
         if(RedisController.jedis.exists(key)) {
             System.out.println("Cache hit:" + key);
             return RedisController.jedis.get(key);
         }
 
         ArrayList<Document> docs = ArticleService.query_article(new BasicDBObject("aid", aid));
-        JSONObject res = new JSONObject();
-        res.put("res", docs.get(0).toString());
-
-        String ret = res.toString();
+        String ret = JSON.toJSONString(docs);
         RedisController.jedis.set(key, ret);
 
         return ret;
@@ -88,10 +75,7 @@ public class MongoController {
         }
 
         ArrayList<Document> docs = BeReadService.query_be_read(new BasicDBObject("aid", Integer.parseInt(aid)));
-        JSONObject res = new JSONObject();
-        res.put("res", docs.get(0).toString());
-
-        String ret = res.toString();
+        String ret = JSON.toJSONString(docs);
         RedisController.jedis.set(key, ret);
 
         return ret;
@@ -135,15 +119,10 @@ public class MongoController {
                 target.add(aids.get(i) + "");
             }
         }
-        JSONObject res = new JSONObject();
-        ArrayList<Document> article_docs = ArticleService.query_article(new BasicDBObject("aid", new BasicDBObject("$in", target)));
-        int count = 0;
-        for(Document article: article_docs) {
-            res.put("res" + count, article.toJson());
-            count++;
-        }
 
-        String ret = res.toString();
+        ArrayList<Document> article_docs = ArticleService.query_article(new BasicDBObject("aid", new BasicDBObject("$in", target)));
+
+        String ret = JSON.toJSONString(article_docs);
         RedisController.jedis.set(key, ret);
 
         return ret;
