@@ -1,5 +1,6 @@
 package dbms.Controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.BasicDBObject;
 import dbms.Service.ArticleService;
@@ -27,8 +28,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class MongoController {
     
     @RequestMapping("/query_user")
-    JSONObject query_user(String uid, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+    String query_user(String uid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+        String key = "query_user:uid=" + uid;
+        if(RedisController.jedis.exists(key)) {
+            System.out.println("Cache hit:" + key);
+            return RedisController.jedis.get(key);
+        }
+        System.out.println("Cache miss:" + key);
+
         ArrayList<Document> docs = ReadService.query_read(new BasicDBObject("uid", uid));
         JSONObject res = new JSONObject();
         ArrayList<String> aids = new ArrayList<>();
@@ -41,30 +50,63 @@ public class MongoController {
             res.put("res" + count, doc.toJson());
             count++;
         }
-        return res;
+
+        String ret = res.toString();
+        RedisController.jedis.set(key, ret);
+
+        return ret;
     }
 
     @RequestMapping("/query_article")
-    JSONObject query_article(@RequestParam(value="aid") String aid, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+    String query_article(@RequestParam(value="aid") String aid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+        String key = "query_article:aid=" + aid;
+        if(RedisController.jedis.exists(key)) {
+            System.out.println("Cache hit:" + key);
+            return RedisController.jedis.get(key);
+        }
+
         ArrayList<Document> docs = ArticleService.query_article(new BasicDBObject("aid", aid));
         JSONObject res = new JSONObject();
         res.put("res", docs.get(0).toString());
-        return res;
+
+        String ret = res.toString();
+        RedisController.jedis.set(key, ret);
+
+        return ret;
     }
 
     @RequestMapping("/query_article_status")
-    JSONObject query_article_status(@RequestParam(value="aid") String aid, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+    String query_article_status(@RequestParam(value="aid") String aid, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+        String key = "query_article_status:aid=" + aid;
+        if(RedisController.jedis.exists(key)) {
+            System.out.println("Cache hit:" + key);
+            return RedisController.jedis.get(key);
+        }
+
         ArrayList<Document> docs = BeReadService.query_be_read(new BasicDBObject("aid", Integer.parseInt(aid)));
         JSONObject res = new JSONObject();
         res.put("res", docs.get(0).toString());
-        return res;
+
+        String ret = res.toString();
+        RedisController.jedis.set(key, ret);
+
+        return ret;
     }
 
     @RequestMapping("/popular_rank")
-    JSONObject query_popular_rank(@RequestParam(value="time") Long time, @RequestParam(value="type") String type, @RequestParam(value="limit") int limit, HttpServletResponse response) {
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173"); 
+    String query_popular_rank(@RequestParam(value="time") Long time, @RequestParam(value="type") String type, @RequestParam(value="limit") int limit, HttpServletResponse response) {
+        response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+
+        String key = "query_article_status:time=" + time + "type:" + type + "limit:" + limit;
+        if(RedisController.jedis.exists(key)) {
+            System.out.println("Cache hit:" + key);
+            return RedisController.jedis.get(key);
+        }
+
         Timestamp tmp = new Timestamp(time);
         BasicDBObject condition = new BasicDBObject();
         LocalDateTime date = tmp.toLocalDateTime();
@@ -100,7 +142,11 @@ public class MongoController {
             res.put("res" + count, article.toJson());
             count++;
         }
-        return res;
+
+        String ret = res.toString();
+        RedisController.jedis.set(key, ret);
+
+        return ret;
     }
 
 }

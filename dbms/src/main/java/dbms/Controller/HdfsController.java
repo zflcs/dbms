@@ -18,8 +18,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.security.UserGroupInformation;
 
-import dbms.Controller.RedisController;
-
 @RestController
 public class HdfsController {
 
