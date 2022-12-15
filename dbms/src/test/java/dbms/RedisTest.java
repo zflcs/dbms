@@ -7,7 +7,7 @@ public class RedisTest {
     @Test
     public void redisTest01() {
         //连接本地的 Redis 服务
-        Jedis jedis = new Jedis("localhost", 6379);
+        Jedis jedis = new Jedis("172.20.1.12", 6379);
         // 如果 Redis 服务设置了密码，需要用下面这行代码输入密码
         // jedis.auth("123456");
         System.out.println("连接成功");

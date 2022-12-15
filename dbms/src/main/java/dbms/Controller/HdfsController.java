@@ -28,7 +28,7 @@ public class HdfsController {
     static {
         HdfsController.UGI = UserGroupInformation.createRemoteUser("hadoop");
         HdfsController.CONF = new Configuration();
-        HdfsController.CONF.set("fs.defaultFS", "hdfs://127.0.0.1:9000");
+        HdfsController.CONF.set("fs.defaultFS", "hdfs://172.20.1.0:9000");
         try {
             HdfsController.FS = FileSystem.get(HdfsController.CONF);
         } catch (IOException e) {

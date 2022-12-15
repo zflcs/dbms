@@ -29,7 +29,7 @@ public class MongoController {
     }
 
     @RequestMapping("/query_user")
-    String query_user(String uid, HttpServletResponse response) {
+    String query_user(@RequestParam(value="uid") String uid, HttpServletResponse response) {
         response.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
 
         String key = "query_user:uid=" + uid;
@@ -117,6 +117,8 @@ public class MongoController {
         for(int i = 0; i < aids.size(); i++) {
             if(i < limit) {
                 target.add(aids.get(i) + "");
+            } else {
+                break;
             }
         }
 

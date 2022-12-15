@@ -5,6 +5,8 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.security.UserGroupInformation;
 
+import dbms.Controller.HdfsController;
+
 public class HdfsConfig {
     public static UserGroupInformation UGI;
     public static Configuration CONF;
