@@ -1,0 +1,3 @@
+[submodule "distributed_database_system_frontend"]
+	path = distributed_database_system_frontend
+	url = https://github.com/haoliu97/distributed_database_system_frontend.git
