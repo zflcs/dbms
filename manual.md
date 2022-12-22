@@ -334,13 +334,13 @@ docker run -itd --name=dbms --hostname=dbms --network=hnet --ip=172.20.1.3 --add
 
 After that, we connect the container with vscode, copy the dbms folder in the directory into the container. 
 
-![image-20221222213715648](E:\ddbs-project\manual.assets\image-20221222213715648.png)
+![image-20221222213715648](./manual.assets/image-20221222213715648.png)
 
 Although the mongDB is set up, the collections have not been initialized, so we need to execute `InitMongo.java` to initialize the collections. (To run the application properly, we need to install the relevant plugins in vscode, such as Springboot, Maven and so on.)
 
 Once the collection is initialized, we can start executing `App.java` to launch the entire backend application, which can then be accessed via port 8080.
 
-![image-20221222221050384](E:\ddbs-project\manual.assets\image-20221222221050384.png)
+![image-20221222221050384](./manual.assets/image-20221222221050384.png)
 
 ## Run the Vue frontend application
 
@@ -354,7 +354,7 @@ npm run dev
 
 After that, we can interact with the backend via the vue application.
 
-![image-20221222222910669](E:\ddbs-project\manual.assets\image-20221222222910669.png)
+![image-20221222222910669](./manual.assets/image-20221222222910669.png)
 
 ## Shut down
 
