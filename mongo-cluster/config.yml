@@ -24,13 +24,3 @@ services:
     ports:
       - 40002:27017
 
-# rs.initiate(
-#   {
-#     _id: "cfgrs",
-#     configsvr: true,
-#     members: [
-#       { _id : 0, host : "172.20.1.5:27017" },
-#       { _id : 1, host : "172.20.1.6:27017" }
-#     ]
-#   }
-# )

@@ -46,30 +46,8 @@ services:
       - 50004:27017
 
 
-# rs.initiate(
-#   {
-#     _id : "shard0",
-#     members: [
-#       { _id : 0, host : "172.20.1.7:27017" }
-#     ]
-#   }
-# )
 
-# rs.initiate(
-#   {
-#     _id : "shardrep",
-#     members: [
-#       { _id : 0, host : "172.20.1.8:27017" },
-#       { _id : 1, host : "172.20.1.9:27017" }
-#     ]
-#   }
-# )
 
-# rs.initiate(
-#   {
-#     _id : "shard1",
-#     members: [
-#       { _id : 1, host : "172.20.1.10:27017" }
-#     ]
-#   }
-# )
+
+
+
